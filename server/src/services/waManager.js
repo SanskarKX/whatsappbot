@@ -20,10 +20,12 @@ class PerUserClient {
     if (this.client) return this.client;
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-    // Persist auth under server/.wwebjs_auth to survive restarts regardless of CWD
-    const dataPath = path.resolve(__dirname, '../../.wwebjs_auth');
+    // Persist auth. Prefer AUTH_DATA_PATH (e.g., a Render disk mount), fallback to repo path.
+    const authBase = process.env.AUTH_DATA_PATH
+      ? path.resolve(process.env.AUTH_DATA_PATH)
+      : path.resolve(__dirname, '../../.wwebjs_auth');
     this.client = new Client({
-      authStrategy: new LocalAuth({ clientId: this.userId, dataPath }),
+      authStrategy: new LocalAuth({ clientId: this.userId, dataPath: authBase }),
       puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
     });
 
