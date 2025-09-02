@@ -1,0 +1,15 @@
+# Root ignores
+/node_modules
+.DS_Store
+.env
+
+# Client
+/client/node_modules
+/client/dist
+/client/.env
+
+# Server
+/server/node_modules
+/server/.env
+/server/.wwebjs_auth
+/server/.cache
