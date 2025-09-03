@@ -107,6 +107,11 @@ app.post('/controls/ai-config', authMiddleware, (req, res) => {
   res.json({ ok: true, ...cfg });
 });
 
+// Health check endpoint (no auth required)
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Status endpoint
 app.get('/status', authMiddleware, async (req, res) => {
   const userId = req.userId;
