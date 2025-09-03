@@ -26,7 +26,18 @@ class PerUserClient {
       : path.resolve(__dirname, '../../.wwebjs_auth');
     this.client = new Client({
       authStrategy: new LocalAuth({ clientId: this.userId, dataPath: authBase }),
-      puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
+      puppeteer: { 
+        headless: true, 
+        args: [
+          '--no-sandbox', 
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--disable-gpu'
+        ] 
+      },
     });
 
     this.client.on('qr', async (qr) => {

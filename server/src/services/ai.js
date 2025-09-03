@@ -67,6 +67,11 @@ class AIService {
     const model = this.models.get(userId) || (this.globalApiKey ? (new GoogleGenerativeAI(this.globalApiKey)).getGenerativeModel({ model: 'gemini-1.5-flash' }) : null);
     const cooldownUntil = this.cooldowns.get(userId) || 0;
     if (Date.now() < cooldownUntil) return null;
+    
+    // Add timeout to prevent hanging requests
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('AI request timeout')), 8000)
+    );
     const header = [
       this.#getPrompt(userId),
       `Sender: ${contactName || 'Unknown'}`,
@@ -88,7 +93,10 @@ class AIService {
     // First try Gemini if available
     if (model) {
       try {
-        const result = await model.generateContent(prompt);
+        const result = await Promise.race([
+          model.generateContent(prompt),
+          timeoutPromise
+        ]);
         const text = result.response.text();
         const trimmed = (text || '').trim();
         if (trimmed) {
